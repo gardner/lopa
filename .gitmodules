@@ -1,0 +1,3 @@
+[submodule "img/cats"]
+	path = img/cats
+	url = https://github.com/maxogden/cats.git
