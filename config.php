@@ -29,7 +29,6 @@ class LopaDB {
 		return $mysqli;
 	}
 	
-	function 
 }
 
 class Lopa {
