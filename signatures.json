@@ -1,8 +1,17 @@
-s = {
-    "signatures": 31337,
-	"states": [
-		{"state": "CA", "sigs": 4096},
-		{"state": "NY", "sigs": 2048}
-		{"state": "WA", "sigs": 1024}
-	]
+{
+    "total": 31337,
+    "states": [
+        {
+            "name": "CA",
+            "votes": 4096
+        },
+        {
+            "name": "NY",
+            "votes": 2048
+        },
+        {
+            "name": "WA",
+            "votes": 1024
+        }
+    ]
 }
