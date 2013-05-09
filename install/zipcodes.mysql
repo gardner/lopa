@@ -1,13 +1,3 @@
--- MySQL dump 9.11
---
--- Host: localhost    Database: civicspace
--- ------------------------------------------------------
--- Server version	4.0.18-log
-
---
--- Table structure for table `zipcodes`
---
-
 CREATE TABLE zipcodes (
   zip int(5) NOT NULL default '0',
   city varchar(30) NOT NULL default '',
@@ -20,7 +10,7 @@ CREATE TABLE zipcodes (
   KEY zip (zip),
   KEY latitude (latitude),
   KEY longitude (longitude)
-) ENGINE=MYISAM;
+);
 
 --
 -- Dumping data for table `zipcodes`

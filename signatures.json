@@ -1,0 +1,8 @@
+s = {
+    "signatures": 31337,
+	"states": [
+		{"state": "CA", "sigs": 4096},
+		{"state": "NY", "sigs": 2048}
+		{"state": "WA", "sigs": 1024}
+	]
+}

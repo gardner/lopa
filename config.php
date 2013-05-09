@@ -13,10 +13,13 @@ define('DOMAIN', 'cohal.org');
 define('DB_HOST', '127.0.0.1');
 define('DB_NAME', 'lopa');
 define('DB_USER', 'paritycc');
-define('DB_PASS', 'GvQ4C5A8TgcEyAYIMEncdP4a');
+define('DB_PASS', '');
 
-class Db {
-	
+// start up a session
+session_start();
+
+
+class LopaDB {
 	function con() {
 		$mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 		if ($mysqli->connect_errno) {
@@ -26,54 +29,52 @@ class Db {
 		return $mysqli;
 	}
 	
+	function 
 }
 
-
 class Lopa {
-	var $db = new Db();
-	var $sess = false;
+	var $db;
 	
-	// a procrastinator method to start the session if it has not been started yet and to return it.
-	function get_session() {
-		if (!$sess) {
-			session_start();
-		}
-		return $_SESSION;
-	}
+    function __construct() {
+        $this->db = new LopaDB();
+    }
+	
   	 // Check the HTTP_REFERER is valid when method is POST
-    function check_referer($method = $_SERVER['REQUEST_METHOD'], $ref = $_SERVER['HTTP_REFERER']) {
-	   	 if (('POST' === $rmethod) && isset($ref) && 
-	   	    (!strncmp($ref, $needle, strlen($needle)))) {
+//    function check_referer($method = $_SERVER['REQUEST_METHOD'], $ref = $_SERVER['HTTP_REFERER']) {
+    function check_referer($method = NULL, $ref = NULL) {
+		$method = (NULL == $method) ? $_SERVER['REQUEST_METHOD'] : $method;
+		$ref = (NULL == $ref) ? $_SERVER['HTTP_REFERER'] : $ref;
+		
+	   	 if (('POST' === $method) && isset($ref) && 
+	   	    (!strncmp($ref, DOMAIN, strlen(DOMAIN)))) {
 	   		 $u = url_parse($ref);
 	   		 if (($u === FALSE) || // parse_url() can return false on mangled input 
 	   		    (stristr($u['host'], DOMAIN) === FALSE)) {
-	   		   header('500 Internal Server Error', true, 500);
-	   		   echo "<h1>500 Internal Server Error</h1>";
-	   		   die;
+	   		   return false;
 	   		 }
 	   	 }
 		 return true;
     }
 
 	// Set the next CSRF token to use in forms
-	function set_csrf_token($session = get_session()) {
-		$session['NEXTCSRF_TOKEN'] = openssl_random_pseudo_bytes(16);
-		if (!isset($session['CSRF_TOKEN'])) {
-			$session['CSRF_TOKEN'] = $session['NEXTCSRF_TOKEN'];
-		}
+	function set_csrf_token(&$session = NULL) {
+		$session = (NULL == $session) ? $_SESSION : $session;
+		
+		$session['CSRF_TOKEN'] = md5(uniqid(rand(), true));
 	}
 	
 	 // If the user agent is too short, contains curl, or wget, then just throw an error.
-	 function checkua($ua = $_SERVER['HTTP_USER_AGENT']) {
+	 function checkua($ua = NULL) {
+		$ua = (NULL === $ua) ? $_SERVER['HTTP_USER_AGENT'] : $ua;
+		
 		if (isset($ua)) {
-			if ((strlen($ua) < 4) ||
-			   (stristr($ua, 'curl') !== FALSE) ||
-			   (stristr($ua, 'wget') !== FALSE)) {
-				   header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
-				   echo "<h1>500 Internal Server Error</h1>";
-				   die;
+			if ((strlen($ua) > 4) &&
+			   (stristr($ua, 'curl') === FALSE) &&
+			   (stristr($ua, 'wget') === FALSE)) {
+				   return true;
 		 	}
-		}
+		} 
+		return false;
 	}
 }
 

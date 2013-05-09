@@ -192,6 +192,7 @@
 
           <h2>TAKE ACTION NOW</h2>
           <form action="sign.php" method="POST">
+			<? php echo $_SESSION['my_token']?>
             <label for="firstname">Full Name:
             <input type="text" name="fullname" id="fullname" /></label>
             <label for="email">Email Address:
