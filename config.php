@@ -19,7 +19,7 @@ define('DB_PASS', 'GvQ4C5A8TgcEyAYIMEncdP4a');
 session_start();
 
 
-class LopaDB {
+class Lopa {
 	function con() {
 		$mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 		if ($mysqli->connect_errno) {
@@ -28,15 +28,6 @@ class LopaDB {
 		}
 		return $mysqli;
 	}
-	
-}
-
-class Lopa {
-	var $db;
-	
-    function __construct() {
-        $this->db = new LopaDB();
-    }
 	
   	 // Check the HTTP_REFERER is valid when method is POST
 //    function check_referer($method = $_SERVER['REQUEST_METHOD'], $ref = $_SERVER['HTTP_REFERER']) {
