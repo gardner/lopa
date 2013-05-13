@@ -14,17 +14,22 @@ define('DB_HOST', '127.0.0.1');
 define('DB_NAME', 'lopa');
 define('DB_USER', 'paritycc');
 define('DB_PASS', 'GvQ4C5A8TgcEyAYIMEncdP4a');
+define('TIME_FILE', '/tmp/last_signature.tmp')
 
 // start up a session
 session_start();
 
 
 class Lopa {
+	var $mysqli = null;
+	
 	function con() {
-		$mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-		if ($mysqli->connect_errno) {
-		    echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
-			die;
+		if ($mysqli === null) {}
+			$mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+			if ($mysqli->connect_errno) {
+			    echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
+				die;
+			}
 		}
 		return $mysqli;
 	}
@@ -65,6 +70,56 @@ class Lopa {
 		 	}
 		} 
 		return false;
+	}
+	
+	// This runs when needed to update the static json file.
+	function update_json() {
+		// if the time file is there and it was touched more than 2 seconds ago
+		if ((file_exists(TIME_FILE)) && (time() - filemtime(TIME_FILE) >= 2)) {
+			// update the time file
+			touch(TIME_FILE);
+
+			// update the json file
+			$db = $this->con();
+
+			$res = $db->query("select count(email) from signatures group by state ");
+			$row = $res->fetch_array();
+			$total = $row[0];
+			
+			$res = $db->query("select state,count(state) from signatures order group by count(state) ");
+			$row = $res->fetch_array();
+			$total = $row[0];
+
+			$res = $db->query("select count(email) from signatures");
+			$row = $res->fetch_array();
+			$total = $row[0];
+
+			$res = $db->query("select count(email) from signatures");
+			$row = $res->fetch_array();
+			$total = $row[0];
+			
+			
+		}
+	}
+	
+	function add_signature($fullname, $email, $mailinglist, $zip) {
+		$this->check_referer();
+		$db = $this->con();
+		
+		// pulling the state out here ensures that it happens once per signature.
+		$stmnt = $db->prepare("select state from zipcodes where zip = ?");
+		$stmnt->bind_param('i', $zip);
+		$stmnt->execute();
+		$res = $stmnt->get_result();
+		$row = $res->fetch_array();
+		$state = $row;
+
+		// duplicating state in the signature table prevents expensive joins on read.
+		$stmnt = $db->prepare("insert into signatures (fullname, email, mailinglist, zip) values (?, ?, ?, ?)");
+		$stmnt->bind_param('ssii', $fullename, $email, $mailinglist, $zip);
+		$stmnt->execute();
+		
+		touch(TIME_FILE);
 	}
 }
 

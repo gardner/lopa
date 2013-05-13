@@ -44,5 +44,10 @@ class TestOfLopa extends UnitTestCase {
 		$this->assertFalse($res === FALSE, "Upabe to connect to the database.");
     }
 	
+	function testAddSig() {
+		add_signature($fullname, $email, $mailinglist, $zip) {
+		
+	}
+	
 }
 ?>
