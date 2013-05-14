@@ -13,7 +13,7 @@ define('DOMAIN', 'cohal.org');
 define('DB_HOST', '127.0.0.1');
 define('DB_NAME', 'lopa');
 define('DB_USER', 'paritycc');
-define('DB_PASS', 'GvQ4C5A8TgcEyAYIMEncdP4a');
+define('DB_PASS', file_get_contents('dbpass.txt'));
 define('TIME_FILE', '/tmp/last_signature.tmp')
 
 // start up a session
