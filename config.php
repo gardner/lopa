@@ -7,14 +7,17 @@
  * @copyright  2013 Gardner Bickford
  * @license    https://www.gnu.org/licenses/gpl.txt  GPL License 3
  */
+$srcroot = realpath(dirname(__FILE__));
+$dbini =  "$srcroot/db.ini";
 
 define('DOMAIN', 'cohal.org');
 //	define('DB_HOST', 'mysql.parity.cc');
 define('DB_HOST', '127.0.0.1');
 define('DB_NAME', 'lopa');
-define('DB_USER', 'paritycc');
-define('DB_PASS', file_get_contents('dbpass.txt'));
-define('TIME_FILE', '/tmp/last_signature.tmp')
+$creds = parse_ini_file($dbini);
+define('DB_USER', $creds['username']);
+define('DB_PASS', $creds['password']);
+define('TIME_FILE', "$srcroot/tmp/last_signature.tmp");
 
 // start up a session
 session_start();
@@ -24,15 +27,16 @@ class Lopa {
 	var $mysqli = null;
 	
 	function con() {
-		if ($mysqli === null) {}
+		if ($mysqli === null) {
 			$mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 			if ($mysqli->connect_errno) {
 			    echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
 				die;
-			}
-		}
-		return $mysqli;
+		    }
+        }
+    	return $mysqli;
 	}
+	
 	
   	 // Check the HTTP_REFERER is valid when method is POST
 //    function check_referer($method = $_SERVER['REQUEST_METHOD'], $ref = $_SERVER['HTTP_REFERER']) {
@@ -101,6 +105,10 @@ class Lopa {
 			
 		}
 	}
+    
+    function get_number_of_seconds_since_last_signature() {
+        return time() - filemtime(TIME_FILE);
+    }
 	
 	function add_signature($fullname, $email, $mailinglist, $zip) {
 		$this->check_referer();

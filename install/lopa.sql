@@ -1,3 +1,17 @@
+create table signatures (
+	id INT NOT NULL AUTO_INCREMENT,
+	full_name VARCHAR(70),
+	email VARCHAR(250) NOT NULL,
+	zip int(5) NOT NULL default '0',
+    mailinglist TINYINT(1) default '0',
+	state CHAR(2),
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	PRIMARY KEY (id),
+	KEY (state),
+	UNIQUE (email)
+);
+
 CREATE TABLE zipcodes (
   zip int(5) NOT NULL default '0',
   city varchar(30) NOT NULL default '',
@@ -13,7 +27,7 @@ CREATE TABLE zipcodes (
 );
 
 --
--- Dumping data for table `zipcodes`
+-- data for table `zipcodes`
 --
 
 INSERT INTO zipcodes VALUES (210,'Portsmouth','NH','43.005895','-71.013202',-5,1);

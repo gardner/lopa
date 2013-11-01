@@ -35,18 +35,21 @@ class TestOfLopa extends UnitTestCase {
     function testLopanegativetestuaToShort() {
 		$lopa = new Lopa();
 		$res = $lopa->checkua('c');
-		$this->assertFalse($res, 'testua returned true on a fake user agent.');		
+		$this->assertFalse($res, 'testUA returned true on a fake user agent.');		
     }
 	
     function testDbConnection() {
 		$lopa = new Lopa();
-		$res = $lopa->db->con();
-		$this->assertFalse($res === FALSE, "Upabe to connect to the database.");
+		$res = $lopa->$db->con();
+		$this->assertFalse($res === FALSE, "Unable to connect to the database.");
     }
 	
 	function testAddSig() {
-		add_signature($fullname, $email, $mailinglist, $zip) {
-		
+		$lopa = new Lopa();
+        $seconds_since_last_should_be_higher = $lopa->get_number_of_seconds_since_last_signature();
+		$lopa->add_signature("Gardner Bickford", "gardner@invulnerable.org", true, 94110);
+        // now seconds since last signature should be less than 
+        $this->assertTrue($seconds_since_last_should_be_higher > $lopa->get_number_of_seconds_since_last_signature());
 	}
 	
 }
